@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Budget Manager</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <nav>
+        <div class="logo">
+            <h2>Our<span>Wallet</span></h2>
+        </div>
+        <div class="nav-links">
+            {% if request.session.username %}
+                <a href="{% url 'dashboard' %}">Dashboard</a>
+                <a href="{% url 'set_budget' %}">Set Budget</a>
+                <a href="{% url 'add_expense' %}">+ Add Expense</a>
+                <a href="{% url 'logout' %}" style="color: #fda4af;">Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'register' %}">Register Shared Account</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container">
+        {% if messages %}
+            <div class="alerts">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

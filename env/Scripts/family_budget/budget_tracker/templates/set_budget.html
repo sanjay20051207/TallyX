@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="auth-wrapper" style="min-height: auto; margin-top: 1rem;">
+    <div class="auth-card" style="max-width: 600px;">
+        <h2>Configure Monthly Budget Targets</h2>
+        <p>Manage family limits, medical safeguards, and future savings allocations.</p>
+        
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="salary">Total Monthly Salary/Earnings (INR)</label>
+                <input type="number" step="any" name="salary" id="salary" class="form-control" value="{{ budget.salary }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="total_limit">Total Shared Budget Cap (INR)</label>
+                <input type="number" step="any" name="total_limit" id="total_limit" class="form-control" value="{{ budget.total_limit }}" required>
+            </div>
+
+            <div style="border-top: 1px solid var(--border); margin: 1.5rem 0; padding-top: 1rem;">
+                <h4 style="margin-bottom: 1rem; color: var(--primary);">Category Specific Spend Caps</h4>
+                
+                <div class="form-group">
+                    <label for="limit_medical">Medical Expenses Allocation (INR)</label>
+                    <input type="number" step="any" name="limit_medical" id="limit_medical" class="form-control" value="{{ budget.limits.Medical_Expenses|default:0.0 }}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="limit_savings">Future Savings Goal (INR)</label>
+                    <input type="number" step="any" name="limit_savings" id="limit_savings" class="form-control" value="{{ budget.limits.Future_Savings|default:0.0 }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="limit_groceries">Groceries & Food (INR)</label>
+                    <input type="number" step="any" name="limit_groceries" id="limit_groceries" class="form-control" value="{{ budget.limits.Groceries_Food|default:0.0 }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="limit_utilities">Utilities & Bills (INR)</label>
+                    <input type="number" step="any" name="limit_utilities" id="limit_utilities" class="form-control" value="{{ budget.limits.Utilities_Bills|default:0.0 }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="limit_entertainment">Entertainment (INR)</label>
+                    <input type="number" step="any" name="limit_entertainment" id="limit_entertainment" class="form-control" value="{{ budget.limits.Entertainment|default:0.0 }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="limit_others">Others (INR)</label>
+                    <input type="number" step="any" name="limit_others" id="limit_others" class="form-control" value="{{ budget.limits.Others|default:0.0 }}">
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary">Save Calculations</button>
+                <a href="{% url 'dashboard' %}" class="btn btn-secondary" style="text-align: center; width: 100%;">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

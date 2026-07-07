@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Budget Dashboard</title>
+</head>
+<body>
+    {% extends 'base.html' %}
+    {% block content %}
+    <div class="section-card" style="background: var(--primary); color: white; margin-bottom: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <div>
+                <h1 style="font-weight: 400;">Namaste, <strong>{{ primary_name }} & {{ companion_name }}</strong></h1>
+            <p style="color: #94a3b8; font-size: 0.95rem;">Shared Family Budget & Savings Dashboard</p>
+        </div>
+        <div style="text-align: right; margin-top: 0.5rem;">
+            <p style="color: #94a3b8; font-size: 0.85rem;">Monthly Household Earnings</p>
+            <h2 style="color: var(--success); font-size: 2rem;">₹{{ budget.salary }}</h2>
+        </div>
+    </div>
+</div>
+
+<div class="metrics-row">
+    <div class="metric-card">
+        <h4>Combined Limit</h4>
+        <div class="value">₹{{ budget.total_limit }}</div>
+    </div>
+    <div class="metric-card">
+        <h4>Total Spent</h4>
+        <div class="value negative">₹{{ total_spent }}</div>
+    </div>
+    <div class="metric-card">
+        <h4>Remaining Funds</h4>
+        <div class="value {% if remaining_budget < 0 %}negative{% else %}positive{% endif %}">
+            ₹{{ remaining_budget }}
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <!-- Left Column: Transactions -->
+    <div>
+        <div class="section-card">
+            <div class="section-title-bar">
+                <h3>Recent Household Expenses</h3>
+                <a href="{% url 'add_expense' %}" class="btn btn-primary btn-sm" style="width: auto;">+ Add Expense</a>
+            </div>
+            
+            {% if expenses %}
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Category</th>
+                                <th>Spender</th>
+                                <th>Amount</th>
+                                <th style="text-align: right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for exp in expenses %}
+                                <tr>
+                                    <td>{{ exp.date }}</td>
+                                    <td><strong>{{ exp.description }}</strong></td>
+                                    <td><span class="tag tag-category">{{ exp.category }}</span></td>
+                                    <td><span class="tag tag-spender">{{ exp.spender }}</span></td>
+                                    <td style="font-weight: 600;">₹{{ exp.amount }}</td>
+                                    <td style="text-align: right; white-space: nowrap;">
+                                        <a href="{% url 'edit_expense' exp.id %}" class="btn btn-secondary btn-sm" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Edit</a>
+                                        <a href="{% url 'delete_expense' exp.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Delete this record?')" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Delete</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p style="text-align: center; color: var(--text-muted); padding: 2rem 0;">No transactions logged yet. Start managing your expenses above.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Right Column: Budget Category Metrics -->
+    <div>
+        <div class="section-card">
+            <div class="section-title-bar">
+                <h3>Limits & Savings Metrics</h3>
+                <a href="{% url 'set_budget' %}" class="btn btn-secondary btn-sm" style="padding: 0.4rem 0.6rem;">Adjust</a>
+            </div>
+
+            {% for cat in categories_progress %}
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>{{ cat.name }}</span>
+                        <span>₹{{ cat.spent }} / ₹{{ cat.limit }}</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill {% if cat.over_limit %} danger {% elif cat.percentage > 85 %} warning {% endif %}" style="--bar-width: {{ cat.percentage }}%;"></div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
